@@ -87,18 +87,21 @@
     clouds.forEach(cloud => cloud.move());
   };
 
-  const renderTreeTrunk = ({ id, x, img }, parent) => {
+  const renderCactus = ({ id, x, y, img, width, height }, parent) => {
     removeElement(id);
 
-    const treeTrunkElement = document.createElement('div');
-    treeTrunkElement.id = id;
-    treeTrunkElement.classList.add('tree-trunk');
-    treeTrunkElement.style.left = px(x);
+    const CactusElement = document.createElement('div');
+    CactusElement.id = id;
+    CactusElement.classList.add('cactus');
+    CactusElement.style.width = px(width);
+    CactusElement.style.height = px(height);
+    CactusElement.style.left = px(x);
+    CactusElement.style.top = px(y);
 
-    const trunkImage = createImg(img);
+    const cactusImage = createImg(img);
 
-    treeTrunkElement.appendChild(trunkImage);
-    parent.appendChild(treeTrunkElement);
+    CactusElement.appendChild(cactusImage);
+    parent.appendChild(CactusElement);
   };
 
   class Dinosaur {
@@ -111,26 +114,30 @@
       this.img = 'assests/runningDino.gif';
     }
 
-    jump(onEnd) {
+    jump(onJumpEnd) {
       const oldY = this.y;
       const oldImg = this.img;
 
-      this.y = -100;
+      this.y = -120;
       this.img = 'assests/dinoStopped.png';
 
       setTimeout(() => {
         this.y = oldY;
         this.img = oldImg;
 
-        onEnd();
-      }, 1500);
+        onJumpEnd();
+      }, 1000);
     }
 
     hasHitWith(obstacle) {
+      const dinoRight = this.x + this.width;
+      const obstacleRight = obstacle.x + obstacle.width;
+      const dinoBottom = this.y + this.height;
+
       return (
-        (this.x + this.width) >= (obstacle.x) &&
-        (this.x) <= (obstacle.x + obstacle.width) &&
-        (this.y + this.height) > obstacle.y
+        (dinoRight) >= (obstacle.x) &&
+        (this.x) <= (obstacleRight) &&
+        (dinoBottom) > (obstacle.y)
       );
     }
 
@@ -144,16 +151,18 @@
       'dino',
       100,
       50,
-      100,
-      200
+      200,
+      150
     );
   };
 
-  const renderDinosaur = ({ id, x, y, img }, viewElement) => {
+  const renderDinosaur = ({ id, x, y, width, height, img }, viewElement) => {
     removeElement(id);
 
     const dinosaurHtml = document.createElement('div');
     dinosaurHtml.classList.add('dinosaur');
+    dinosaurHtml.style.width = px(width);
+    dinosaurHtml.style.height = px(height);
     dinosaurHtml.style.left = px(x);
     dinosaurHtml.style.top = px(y);
     dinosaurHtml.id = id;
@@ -164,7 +173,7 @@
     viewElement.appendChild(dinosaurHtml);
   };
 
-  class TreeTrunk {
+  class Cactus {
     constructor(id, x, y, width, height, speed) {
       this.id = id;
       this.x = x;
@@ -172,7 +181,7 @@
       this.width = width;
       this.height = height;
       this.speed = speed;
-      this.img = 'assests/trunk.png';
+      this.img = 'https://cdn.pixabay.com/photo/2020/07/06/07/35/cactus-5375863_960_720.png';
     }
 
     move() {
@@ -184,16 +193,16 @@
   }
 
   const createObstacle = () => {
-    const obstacleId = 'tree-trunk';
-    const trunk = new TreeTrunk(
+    const obstacleId = 'cactus';
+    const cactus = new Cactus(
       obstacleId,
       window.innerWidth,
-      200,
+      50,
       100,
-      200,
+      150,
       10
     );
-    return trunk;
+    return cactus;
   };
 
   const main = () => {
@@ -204,7 +213,7 @@
     renderClouds(clouds, cloudsElement);
 
     const obstacle = createObstacle();
-    renderTreeTrunk(obstacle, road);
+    renderCactus(obstacle, road);
 
     const dinosaur = createDinosaur();
     renderDinosaur(dinosaur, road);
@@ -212,6 +221,7 @@
     const intervalId = setInterval(() => {
       if (dinosaur.hasHitWith(obstacle)) {
         clearInterval(intervalId);
+
         dinosaur.stop();
         renderDinosaur(dinosaur, road);
         return;
@@ -221,12 +231,11 @@
       renderClouds(clouds, cloudsElement);
 
       obstacle.move();
-      renderTreeTrunk(obstacle, road);
+      renderCactus(obstacle, road);
     }, 30);
 
     window.onkeydown = (event) => {
       if (event.code !== 'Space') {
-        clearInterval(intervalId);
         return;
       }
       dinosaur.jump(() => {

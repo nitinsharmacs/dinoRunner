@@ -41,13 +41,12 @@
   width: 100%;
 }
 
-.tree-trunk {
+.cactus {
   position: absolute;
   top: 30%;
   width: 200px;
-  transform: rotate(16deg);
 }
 
-.tree-trunk img {
+.cactus img {
   width: 100%;
 }
