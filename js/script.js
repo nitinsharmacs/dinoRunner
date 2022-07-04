@@ -113,27 +113,29 @@
 
     jump(onEnd) {
       const oldY = this.y;
+      const oldImg = this.img;
+
       this.y = -100;
+      this.img = 'assests/dinoStopped.png';
 
       setTimeout(() => {
         this.y = oldY;
+        this.img = oldImg;
 
         onEnd();
       }, 1500);
     }
 
     hasHitWith(obstacle) {
-
       return (
-        obstacle.x - obstacleWidth <= dinoPosition.x
-        && this.y < obstacleHeight
+        (this.x + this.width) >= (obstacle.x) &&
+        (this.x) <= (obstacle.x + obstacle.width) &&
+        (this.y + this.height) > obstacle.y
       );
     }
 
     stop() {
       this.img = 'assests/dinoStopped.png';
-      const [dinoImgHtml] = this.html.children;
-      dinoImgHtml.src = this.img;
     }
   }
 
@@ -186,7 +188,7 @@
     const trunk = new TreeTrunk(
       obstacleId,
       window.innerWidth,
-      12,
+      200,
       100,
       200,
       10
@@ -207,7 +209,14 @@
     const dinosaur = createDinosaur();
     renderDinosaur(dinosaur, road);
 
-    setInterval(() => {
+    const intervalId = setInterval(() => {
+      if (dinosaur.hasHitWith(obstacle)) {
+        clearInterval(intervalId);
+        dinosaur.stop();
+        renderDinosaur(dinosaur, road);
+        return;
+      }
+
       moveClouds(clouds);
       renderClouds(clouds, cloudsElement);
 
@@ -217,6 +226,7 @@
 
     window.onkeydown = (event) => {
       if (event.code !== 'Space') {
+        clearInterval(intervalId);
         return;
       }
       dinosaur.jump(() => {
