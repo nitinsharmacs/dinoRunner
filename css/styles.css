@@ -1,0 +1,53 @@
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+.page {
+  width: 100vw;
+  height: 100vh;
+  background: #e8ebf0;
+  display: flex;
+  flex-direction: column;
+}
+
+.clouds {
+  position: relative;
+  flex: 1;
+}
+
+.cloud {
+  position: absolute;
+  transform: scale(0.8);
+}
+
+.road {
+  background-color: #ddbea9;
+  flex: 0.5;
+  position: relative;
+}
+
+.dinosaur {
+  width: 300px;
+  position: relative;
+  left: 100px;
+  top: 50px;
+  z-index: 1;
+  transition: 0.3s linear;
+}
+
+.dinosaur img {
+  width: 100%;
+}
+
+.tree-trunk {
+  position: absolute;
+  top: 30%;
+  width: 200px;
+  transform: rotate(16deg);
+}
+
+.tree-trunk img {
+  width: 100%;
+}
